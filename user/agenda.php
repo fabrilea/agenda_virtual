@@ -5,6 +5,36 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
     exit;
 }
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Agenda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    #calendar {
+      font-size: 1.1rem;
+      min-height: 500px;
+    }
+    .table td, .table th {
+      font-size: 1.1rem;
+      padding: 1rem;
+    }
+    .btn {
+      font-size: 1.1rem;
+      padding: 0.75rem 1.25rem;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<?php include '../sidebar.php'; ?>
+
 <div class="container-fluid py-3">
   <div class="card shadow p-4 mb-4">
     <h2 class="mb-4 text-center">📅 Agenda de <?= htmlspecialchars($_SESSION['user']['nombre']) ?></h2>
@@ -14,7 +44,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
   <div class="card shadow p-4">
     <h3 class="mb-3 text-center">🗂 Mis Turnos</h3>
     <div class="table-responsive">
-      <table class="table table-striped table-lg align-middle text-center" id="tabla-turnos">
+      <table class="table table-striped align-middle text-center" id="tabla-turnos">
         <thead class="table-dark">
           <tr>
             <th>Fecha</th>
@@ -29,17 +59,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
     </div>
   </div>
 </div>
-
-<style>
-#calendar {
-  font-size: 1.2rem;
-}
-.table td, .table th {
-  font-size: 1.1rem;
-  padding: 1rem;
-}
-</style>
-
 
 <script>
 function cargarMisTurnos() {
@@ -73,7 +92,6 @@ function cargarMisTurnos() {
     });
 }
 
-
 function cancelarTurno(id) {
   if (confirm("¿Cancelar este turno?")) {
     fetch("cancelar_turno_user.php", {
@@ -94,10 +112,15 @@ function cancelarTurno(id) {
 
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
+
+  // Detecta si es celular para elegir vista
+  var initialView = window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth';
+
   window.calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
-    events: 'get_turnos.php',
+    initialView: initialView,
     locale: 'es',
+    height: "auto",
+    events: 'get_turnos.php',
     eventClick: function(info) {
       if (info.event.title === "DISPONIBLE") {
         if (confirm("¿Reservar este turno?")) {
@@ -120,8 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
-  calendar.render();
 
+  calendar.render();
   cargarMisTurnos();
 });
 </script>
