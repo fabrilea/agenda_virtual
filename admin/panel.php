@@ -8,58 +8,72 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Panel Admin - Turnos</title>
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="UTF-8">
+  <title>Panel de Administración</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
-    <h2>Panel del Administrador</h2>
-    <div id='calendar'></div>
+<body class="bg-light">
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            selectable: true,
-            events: 'get_turnos_admin.php',
+<?php include '../sidebar.php'; ?>
 
-            dateClick: function(info) {
-                let fecha = info.dateStr;
-                let hora = prompt("Ingrese hora para habilitar turno (HH:MM):");
-                if (hora) {
-                    fetch("crear_turno.php", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ fecha: fecha, hora: hora })
-                    })
-                    .then(r => r.text())
-                    .then(msg => {
-                        alert(msg);
-                        calendar.refetchEvents();
-                    });
-                }
-            },
+<div class="container py-4">
+  <h2 class="mb-4">Panel de Administración</h2>
+  <p class="mb-4">Bienvenido, <strong><?= htmlspecialchars($_SESSION['user']['nombre']) ?></strong></p>
 
-            eventClick: function(info) {
-                if (confirm("¿Desea cancelar este turno?")) {
-                    fetch("cancelar_turno.php", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ id: info.event.id })
-                    })
-                    .then(r => r.text())
-                    .then(msg => {
-                        alert(msg);
-                        calendar.refetchEvents();
-                    });
-                }
-            }
-        });
-        calendar.render();
-    });
-    </script>
+  <div class="row g-4">
+    <div class="col-12 col-md-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title">👥 Usuarios</h5>
+          <p class="display-6 fw-bold text-primary">120</p>
+          <a href="usuarios.php" class="btn btn-outline-primary btn-sm">Gestionar</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title">📅 Reservados</h5>
+          <p class="display-6 fw-bold text-success">45</p>
+          <a href="turnos.php" class="btn btn-outline-success btn-sm">Ver turnos</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title">✅ Disponibles</h5>
+          <p class="display-6 fw-bold text-info">30</p>
+          <a href="turnos.php" class="btn btn-outline-info btn-sm">Administrar</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title">❌ Cancelados</h5>
+          <p class="display-6 fw-bold text-danger">10</p>
+          <a href="turnos.php" class="btn btn-outline-danger btn-sm">Historial</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-8">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title mb-3">📊 Resumen General</h5>
+          <p>Aquí podrás agregar gráficos o estadísticas.</p>
+          <ul>
+            <li>Total de turnos creados</li>
+            <li>Porcentaje de asistencia</li>
+            <li>Usuarios más activos</li>
+          </ul>
+          <a href="reportes.php" class="btn btn-outline-dark btn-sm">Ver reportes</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
