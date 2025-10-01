@@ -112,8 +112,6 @@ function cancelarTurno(id) {
 
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
-
-  // Detecta si es celular para elegir vista
   var initialView = window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth';
 
   window.calendar = new FullCalendar.Calendar(calendarEl, {
@@ -121,6 +119,12 @@ document.addEventListener('DOMContentLoaded', function() {
     locale: 'es',
     height: "auto",
     events: 'get_turnos.php',
+    headerToolbar: {
+      left: 'prev,next',
+      center: 'title',
+      right: 'today'
+    },
+    buttonText: { today: 'Hoy' },
     eventClick: function(info) {
       if (info.event.title === "DISPONIBLE") {
         if (confirm("¿Reservar este turno?")) {

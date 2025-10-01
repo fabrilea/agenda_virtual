@@ -34,6 +34,13 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
 <div class="container-fluid py-3">
   <h2 class="mb-4 text-center">📅 Gestión de Turnos</h2>
 
+  <!-- Botón siempre visible en mobile -->
+  <div class="d-flex justify-content-end mb-2">
+    <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#crearTurnoModal">
+      ➕ Nuevo Turno
+    </button>
+  </div>
+
   <div class="card shadow p-4">
     <div id="calendar"></div>
   </div>
@@ -68,8 +75,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
-
-  // Vista distinta para celular vs escritorio
   var initialView = window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth';
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -77,8 +82,13 @@ document.addEventListener('DOMContentLoaded', function() {
     locale: 'es',
     height: "auto",
     events: 'get_turnos.php',
+    headerToolbar: {
+      left: 'prev,next',
+      center: 'title',
+      right: 'today'
+    },
+    buttonText: { today: 'Hoy' },
     dateClick: function(info) {
-      // Abrir modal con fecha seleccionada
       document.getElementById('fecha').value = info.dateStr;
       var modal = new bootstrap.Modal(document.getElementById('crearTurnoModal'));
       modal.show();
@@ -87,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   calendar.render();
 
-  // Guardar turno nuevo
   document.getElementById('formTurno').addEventListener('submit', function(e) {
     e.preventDefault();
     const fecha = document.getElementById('fecha').value;
@@ -100,12 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(res => res.json())
     .then(data => {
+      alert(data.message);
       if (data.success) {
-        alert(data.message);
         calendar.refetchEvents();
         bootstrap.Modal.getInstance(document.getElementById('crearTurnoModal')).hide();
-      } else {
-        alert("Error: " + data.message);
       }
     })
     .catch(err => alert("Error en la solicitud: " + err));

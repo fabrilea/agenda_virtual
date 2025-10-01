@@ -14,7 +14,6 @@ $totalUsuarios = count($usuarios);
 $totalTurnos   = count($turnos);
 $reservados    = count(array_filter($turnos, fn($t) => $t['estado'] === 'RESERVADO'));
 $disponibles   = count(array_filter($turnos, fn($t) => $t['estado'] === 'DISPONIBLE'));
-$cancelados    = count(array_filter($turnos, fn($t) => $t['estado'] === 'CANCELADO'));
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -59,13 +58,6 @@ $cancelados    = count(array_filter($turnos, fn($t) => $t['estado'] === 'CANCELA
         <h5>✅ Disponibles</h5>
         <p class="display-6 text-info fw-bold"><?= $disponibles ?></p>
         <a href="turnos.php" class="btn btn-info w-100 btn-lg">Administrar</a>
-      </div>
-    </div>
-    <div class="col-12 col-md-6 col-lg-3">
-      <div class="card shadow text-center p-3">
-        <h5>❌ Cancelados</h5>
-        <p class="display-6 text-danger fw-bold"><?= $cancelados ?></p>
-        <a href="turnos.php" class="btn btn-danger w-100 btn-lg">Historial</a>
       </div>
     </div>
   </div>
