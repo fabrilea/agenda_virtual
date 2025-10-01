@@ -129,10 +129,6 @@ $usuarios = $database->getReference('usuarios')->getValue() ?: [];
                   </span>
                 </td>
                 <td>
-                  <!-- Botón Editar (abre modal) -->
-                  <button class="btn btn-sm btn-warning" 
-                          data-bs-toggle="modal" 
-                          data-bs-target="#editarModal<?= $uid ?>">Editar</button>
 
                   <!-- Botón Eliminar -->
                   <form method="POST" style="display:inline;">
@@ -145,48 +141,6 @@ $usuarios = $database->getReference('usuarios')->getValue() ?: [];
                   </form>
                 </td>
               </tr>
-
-              <!-- Modal Editar -->
-              <div class="modal fade" id="editarModal<?= $uid ?>" tabindex="-1">
-                <div class="modal-dialog">
-                  <form method="POST" class="modal-content">
-                    <input type="hidden" name="accion" value="editar">
-                    <input type="hidden" name="id" value="<?= $uid ?>">
-
-                    <div class="modal-header">
-                      <h5 class="modal-title">Editar Usuario</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                      <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" name="nombre" class="form-control" 
-                               value="<?= htmlspecialchars($u['nombre'] ?? '') ?>" required>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" 
-                               value="<?= htmlspecialchars($u['email'] ?? '') ?>" required>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Rol</label>
-                        <select name="rol" class="form-select">
-                          <option value="USER" <?= ($u['rol'] ?? '') === 'USER' ? 'selected' : '' ?>>USER</option>
-                          <option value="ADMIN" <?= ($u['rol'] ?? '') === 'ADMIN' ? 'selected' : '' ?>>ADMIN</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Nueva contraseña (opcional)</label>
-                        <input type="password" name="password" class="form-control">
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
             <?php endforeach; ?>
           </tbody>
         </table>
