@@ -30,3 +30,32 @@ body {
     font-size: 1.3rem;
   }
   
+  /* Evita que los elementos se pisen en pantallas chicas */
+/* Toolbar del calendario: mejor distribución */
+.fc-header-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fc-toolbar-chunk {
+  flex: 1;
+}
+
+.fc-toolbar-chunk:nth-child(1) {
+  text-align: left;   /* flechas */
+}
+.fc-toolbar-chunk:nth-child(2) {
+  text-align: center; /* título */
+}
+.fc-toolbar-chunk:nth-child(3) {
+  text-align: right;  /* botón hoy */
+}
+
+.fc-toolbar-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+

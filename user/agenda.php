@@ -114,17 +114,17 @@ document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
   var initialView = window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth';
 
-  window.calendar = new FullCalendar.Calendar(calendarEl, {
+  var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: initialView,
     locale: 'es',
     height: "auto",
     events: 'get_turnos.php',
     headerToolbar: {
-      left: 'prev,next',
-      center: 'title',
-      right: 'today'
-    },
-    buttonText: { today: 'Hoy' },
+      left: 'prev,next',   // flechas izquierda
+      center: 'title',     // título centrado
+      right: 'today'       // botón Hoy a la derecha
+  },
+  buttonText: { today: 'Hoy' },
     eventClick: function(info) {
       if (info.event.title === "DISPONIBLE") {
         if (confirm("¿Reservar este turno?")) {

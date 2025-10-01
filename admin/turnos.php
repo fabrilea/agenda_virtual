@@ -78,22 +78,19 @@ document.addEventListener('DOMContentLoaded', function() {
   var initialView = window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth';
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: initialView,
-    locale: 'es',
-    height: "auto",
-    events: 'get_turnos.php',
-    headerToolbar: {
-      left: 'prev,next',
-      center: 'title',
-      right: 'today'
-    },
-    buttonText: { today: 'Hoy' },
-    dateClick: function(info) {
-      document.getElementById('fecha').value = info.dateStr;
-      var modal = new bootstrap.Modal(document.getElementById('crearTurnoModal'));
-      modal.show();
-    }
-  });
+  initialView: initialView,
+  locale: 'es',
+  height: "auto",
+  events: 'get_turnos.php',
+  headerToolbar: {
+    left: 'prev,next',   // flechas izquierda
+    center: 'title',     // título centrado
+    right: 'today'       // botón Hoy a la derecha
+  },
+  buttonText: { today: 'Hoy' }
+});
+
+
 
   calendar.render();
 
