@@ -12,6 +12,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
     <title>Mi Agenda</title>
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
     <h2>Agenda de <?= htmlspecialchars($_SESSION['user']['nombre']) ?></h2>

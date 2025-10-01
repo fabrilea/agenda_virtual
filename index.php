@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head><title>Agenda Virtual</title></head>
+<link rel="stylesheet" href="css/styles.css">
 <body>
     <h1>Bienvenido a la Agenda Virtual</h1>
     <?php if (!isset($_SESSION['user'])): ?>
