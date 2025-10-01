@@ -4,6 +4,24 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     header("Location: ../login.php");
     exit;
 }
+
+require '../config.php';
+
+// 🔹 Leer datos de Firebase
+$usuarios = $database->getReference('usuarios')->getValue() ?: [];
+$turnos   = $database->getReference('turnos')->getValue() ?: [];
+
+// 🔹 Calcular métricas
+$totalUsuarios   = count($usuarios);
+$reservados      = 0;
+$disponibles     = 0;
+$cancelados      = 0;
+
+foreach ($turnos as $t) {
+    if ($t['estado'] === 'RESERVADO') $reservados++;
+    elseif ($t['estado'] === 'DISPONIBLE') $disponibles++;
+    elseif ($t['estado'] === 'CANCELADO') $cancelados++;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -26,7 +44,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body text-center">
           <h5 class="card-title">👥 Usuarios</h5>
-          <p class="display-6 fw-bold text-primary">120</p>
+          <p class="display-6 fw-bold text-primary"><?= $totalUsuarios ?></p>
           <a href="usuarios.php" class="btn btn-outline-primary btn-sm">Gestionar</a>
         </div>
       </div>
@@ -35,7 +53,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body text-center">
           <h5 class="card-title">📅 Reservados</h5>
-          <p class="display-6 fw-bold text-success">45</p>
+          <p class="display-6 fw-bold text-success"><?= $reservados ?></p>
           <a href="turnos.php" class="btn btn-outline-success btn-sm">Ver turnos</a>
         </div>
       </div>
@@ -44,7 +62,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body text-center">
           <h5 class="card-title">✅ Disponibles</h5>
-          <p class="display-6 fw-bold text-info">30</p>
+          <p class="display-6 fw-bold text-info"><?= $disponibles ?></p>
           <a href="turnos.php" class="btn btn-outline-info btn-sm">Administrar</a>
         </div>
       </div>
@@ -53,7 +71,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body text-center">
           <h5 class="card-title">❌ Cancelados</h5>
-          <p class="display-6 fw-bold text-danger">10</p>
+          <p class="display-6 fw-bold text-danger"><?= $cancelados ?></p>
           <a href="turnos.php" class="btn btn-outline-danger btn-sm">Historial</a>
         </div>
       </div>
@@ -62,11 +80,11 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
           <h5 class="card-title mb-3">📊 Resumen General</h5>
-          <p>Aquí podrás agregar gráficos o estadísticas.</p>
           <ul>
-            <li>Total de turnos creados</li>
-            <li>Porcentaje de asistencia</li>
-            <li>Usuarios más activos</li>
+            <li>Total de turnos creados: <?= count($turnos) ?></li>
+            <li>Reservados: <?= $reservados ?></li>
+            <li>Disponibles: <?= $disponibles ?></li>
+            <li>Cancelados: <?= $cancelados ?></li>
           </ul>
           <a href="reportes.php" class="btn btn-outline-dark btn-sm">Ver reportes</a>
         </div>
