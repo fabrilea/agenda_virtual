@@ -70,56 +70,49 @@ $usuarios = $database->getReference('usuarios')->getValue() ?: [];
 
 <?php include '../sidebar.php'; ?>
 
-<div class="container py-4">
-  <h2 class="mb-4">Gestión de Usuarios</h2>
+<div class="container-fluid py-3">
+  <h2 class="mb-4 text-center">👥 Gestión de Usuarios</h2>
 
-  <!-- Formulario Agregar Usuario -->
-  <div class="card mb-4 shadow">
-    <div class="card-body">
-      <h5 class="card-title">➕ Agregar Usuario</h5>
-      <form method="POST">
-        <input type="hidden" name="accion" value="agregar">
+  <div class="card mb-4 shadow p-3">
+    <h5>➕ Agregar Usuario</h5>
+    <form method="POST" class="row g-3">
+      <input type="hidden" name="accion" value="agregar">
 
-        <div class="row g-3">
-          <div class="col-md-3">
-            <input type="text" name="nombre" class="form-control" placeholder="Nombre" required>
-          </div>
-          <div class="col-md-3">
-            <input type="email" name="email" class="form-control" placeholder="Correo" required>
-          </div>
-          <div class="col-md-3">
-            <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
-          </div>
-          <div class="col-md-2">
-            <select name="rol" class="form-select" required>
-              <option value="USER">USER</option>
-              <option value="ADMIN">ADMIN</option>
-            </select>
-          </div>
-          <div class="col-md-1">
-            <button type="submit" class="btn btn-success w-100">Guardar</button>
-          </div>
-        </div>
-      </form>
-    </div>
+      <div class="col-12 col-md-4">
+        <input type="text" name="nombre" class="form-control form-control-lg" placeholder="Nombre" required>
+      </div>
+      <div class="col-12 col-md-4">
+        <input type="email" name="email" class="form-control form-control-lg" placeholder="Correo" required>
+      </div>
+      <div class="col-12 col-md-4">
+        <input type="password" name="password" class="form-control form-control-lg" placeholder="Contraseña" required>
+      </div>
+      <div class="col-12 col-md-3">
+        <select name="rol" class="form-select form-select-lg" required>
+          <option value="USER">USER</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-3">
+        <button type="submit" class="btn btn-success btn-lg w-100">Guardar</button>
+      </div>
+    </form>
   </div>
 
-  <!-- Tabla de Usuarios -->
-  <div class="card shadow">
-    <div class="card-body">
-      <h5 class="card-title">👥 Usuarios Registrados</h5>
-      <div class="table-responsive">
-        <table class="table table-striped align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
+  <div class="card shadow p-3">
+    <h5>📋 Usuarios Registrados</h5>
+    <div class="table-responsive">
+      <table class="table table-striped table-lg align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
             <?php foreach ($usuarios as $uid => $u): ?>
               <tr>
                 <td><?= htmlspecialchars($uid) ?></td>
@@ -144,9 +137,8 @@ $usuarios = $database->getReference('usuarios')->getValue() ?: [];
                 </td>
               </tr>
             <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

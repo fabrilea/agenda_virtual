@@ -21,13 +21,21 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
 
 <?php include '../sidebar.php'; ?>
 
-<div class="container py-4">
-  <h2 class="mb-4">Gestión de Turnos</h2>
+<div class="container-fluid py-3">
+  <h2 class="mb-4 text-center">📅 Gestión de Turnos</h2>
 
-  <div class="card shadow p-4">
+  <div class="card shadow p-3">
     <div id="calendar"></div>
   </div>
 </div>
+
+<style>
+#calendar {
+  font-size: 1.2rem;
+  min-height: 600px;
+}
+</style>
+
 
 <!-- Modal Crear Turno -->
 <div class="modal fade" id="crearTurnoModal" tabindex="-1">
