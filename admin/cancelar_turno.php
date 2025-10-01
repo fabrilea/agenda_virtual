@@ -2,9 +2,11 @@
 session_start();
 require '../config.php';
 
+header('Content-Type: application/json');
+
 if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     http_response_code(403);
-    echo "Acceso denegado.";
+    echo json_encode(['success' => false, 'message' => 'Acceso denegado']);
     exit;
 }
 
@@ -13,17 +15,18 @@ $idTurno = $data['id'] ?? null;
 
 if (!$idTurno) {
     http_response_code(400);
-    echo "Falta ID de turno.";
+    echo json_encode(['success' => false, 'message' => 'Turno inválido']);
     exit;
 }
 
-try {
-    // Marcar como CANCELADO (no borramos para mantener historial)
+$turno = $database->getReference('turnos/'.$idTurno)->getValue();
+
+if ($turno) {
     $database->getReference('turnos/'.$idTurno)->update([
         'estado' => 'CANCELADO'
     ]);
-    echo "Turno cancelado correctamente.";
-} catch (Throwable $e) {
-    http_response_code(500);
-    echo "Error al cancelar: " . $e->getMessage();
+    echo json_encode(['success' => true, 'message' => 'Turno cancelado por el administrador.']);
+} else {
+    http_response_code(404);
+    echo json_encode(['success' => false, 'message' => 'Turno no encontrado.']);
 }

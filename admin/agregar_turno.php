@@ -2,7 +2,7 @@
 session_start();
 require '../config.php';
 
-header('Content-Type: application/json'); // 👈 siempre devolvemos JSON
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     http_response_code(403);
@@ -23,7 +23,6 @@ if ($fecha && $hora) {
         'adminId' => $adminId,
         'usuarioId' => null
     ]);
-
     echo json_encode(['success' => true, 'message' => 'Turno creado']);
 } else {
     http_response_code(400);

@@ -2,27 +2,38 @@
 session_start();
 require '../config.php';
 
-$turnos = $database->getReference('turnos')->getValue();
-$adminId = $_SESSION['user']['id'];
-$eventos = [];
+header('Content-Type: application/json');
 
-if ($turnos) {
-    foreach ($turnos as $id => $t) {
-        if ($t['adminId'] === $adminId) {
-            $color = 'green';
-            if ($t['estado'] === 'DISPONIBLE') $color = 'green';
-            if ($t['estado'] === 'RESERVADO') $color = 'blue';
-            if ($t['estado'] === 'CANCELADO') $color = 'red';
-
-            $eventos[] = [
-                'id' => $id,
-                'title' => $t['estado'],
-                'start' => $t['fecha']."T".$t['hora'],
-                'color' => $color
-            ];
-        }
-    }
+if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    exit;
 }
 
-header('Content-Type: application/json');
-echo json_encode($eventos);
+$turnos = $database->getReference('turnos')->getValue() ?: [];
+$eventos = [];
+
+foreach ($turnos as $id => $t) {
+    $color = 'gray';
+    $title = 'Turno';
+
+    if ($t['estado'] === 'DISPONIBLE') {
+        $title = 'DISPONIBLE';
+        $color = 'green';
+    } elseif ($t['estado'] === 'RESERVADO') {
+        $title = 'RESERVADO';
+        $color = 'blue';
+    } elseif ($t['estado'] === 'CANCELADO') {
+        $title = 'CANCELADO';
+        $color = 'red';
+    }
+
+    $eventos[] = [
+        'id' => $id,
+        'title' => $title,
+        'start' => $t['fecha']."T".$t['hora'],
+        'color' => $color
+    ];
+}
+
+echo json_encode(['success' => true, 'eventos' => $eventos]);

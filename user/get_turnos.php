@@ -2,29 +2,34 @@
 session_start();
 require '../config.php';
 
-$turnos = $database->getReference('turnos')->getValue();
+header('Content-Type: application/json');
+
+if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    exit;
+}
+
+$turnos = $database->getReference('turnos')->getValue() ?: [];
 $eventos = [];
 $idUsuario = $_SESSION['user']['id'];
 
-if ($turnos) {
-    foreach ($turnos as $id => $t) {
-        if ($t['estado'] === 'DISPONIBLE') {
-            $eventos[] = [
-                'id' => $id,
-                'title' => "DISPONIBLE",
-                'start' => $t['fecha']."T".$t['hora'],
-                'color' => 'green'
-            ];
-        } elseif ($t['estado'] === 'RESERVADO' && $t['usuarioId'] === $idUsuario) {
-            $eventos[] = [
-                'id' => $id,
-                'title' => "MI TURNO",
-                'start' => $t['fecha']."T".$t['hora'],
-                'color' => 'blue'
-            ];
-        }
+foreach ($turnos as $id => $t) {
+    if ($t['estado'] === 'DISPONIBLE') {
+        $eventos[] = [
+            'id' => $id,
+            'title' => "DISPONIBLE",
+            'start' => $t['fecha']."T".$t['hora'],
+            'color' => 'green'
+        ];
+    } elseif ($t['estado'] === 'RESERVADO' && $t['usuarioId'] === $idUsuario) {
+        $eventos[] = [
+            'id' => $id,
+            'title' => "MI TURNO",
+            'start' => $t['fecha']."T".$t['hora'],
+            'color' => 'blue'
+        ];
     }
 }
 
-header('Content-Type: application/json');
-echo json_encode($eventos);
+echo json_encode(['success' => true, 'eventos' => $eventos]);
