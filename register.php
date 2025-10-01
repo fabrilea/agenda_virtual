@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <form method="POST">
       <div class="mb-3">
-        <label class="form-label">Nombre</label>
+        <label class="form-label">Nombre y Apellido</label>
         <input type="text" name="nombre" class="form-control" required>
       </div>
 

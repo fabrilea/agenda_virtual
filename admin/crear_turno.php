@@ -21,8 +21,9 @@ if ($fecha && $hora) {
         'adminId' => $adminId,
         'usuarioId' => null
     ]);
-    echo "Horario agregado correctamente.";
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'message' => 'Turno creado']);
 } else {
     http_response_code(400);
-    echo "Datos incompletos.";
+    echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
 }
