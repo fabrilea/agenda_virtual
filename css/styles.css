@@ -1,49 +1,32 @@
-/* Texto general más grande */
 body {
-    font-size: 1.2rem;
-    background: #f0f2f5;
+    font-size: 1.2rem; /* texto más grande en general */
   }
   
-  /* Títulos */
-  h1, h2, h3, .card-title {
-    font-size: 1.6rem !important;
-    font-weight: bold;
-  }
-  
-  /* Tarjetas */
   .card {
+    border-radius: 1rem;
     padding: 1.5rem;
-    border-radius: 15px;
   }
   
-  /* Inputs */
-  .form-control {
-    font-size: 1.2rem !important;
-    padding: 14px !important;
+  .card h2, .card h3, .card h5 {
+    font-size: 1.5rem;
   }
   
-  /* Botones */
+  .table th, .table td {
+    font-size: 1.1rem;
+    padding: 1rem;
+  }
+  
   .btn {
-    font-size: 1.2rem !important;
-    padding: 14px !important;
-    border-radius: 10px !important;
+    font-size: 1.2rem;
+    padding: 0.75rem 1.25rem;
   }
   
-  /* Tablas */
-  .table td, .table th {
+  input, select {
     font-size: 1.2rem !important;
-    padding: 14px !important;
+    padding: 0.75rem !important;
   }
   
-  /* Calendario */
-  .fc .fc-daygrid-day-number {
-    font-size: 1.2rem !important;
-  }
-  .fc .fc-toolbar-title {
-    font-size: 1.5rem !important;
-  }
-  .fc-button {
-    font-size: 1.1rem !important;
-    padding: 10px 16px !important;
+  .sidebar {
+    font-size: 1.3rem;
   }
   
