@@ -46,16 +46,16 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
 function cargarMisTurnos() {
   fetch("mis_turnos.php")
     .then(r => r.json())
-    .then(turnos => {
+    .then(data => {
       let tbody = document.querySelector("#tabla-turnos tbody");
       tbody.innerHTML = "";
 
-      if (turnos.length === 0) {
+      if (!data.success || data.turnos.length === 0) {
         tbody.innerHTML = "<tr><td colspan='3'>No tienes turnos reservados</td></tr>";
         return;
       }
 
-      turnos.forEach(t => {
+      data.turnos.forEach(t => {
         let tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${t.fecha}</td>
@@ -67,8 +67,13 @@ function cargarMisTurnos() {
         tbody.appendChild(tr);
       });
     })
-    .catch(err => console.error("Error al cargar turnos:", err));
+    .catch(err => {
+      console.error("Error al cargar turnos:", err);
+      document.querySelector("#tabla-turnos tbody").innerHTML =
+        "<tr><td colspan='3'>Error cargando turnos</td></tr>";
+    });
 }
+
 
 function cancelarTurno(id) {
   if (confirm("¿Cancelar este turno?")) {

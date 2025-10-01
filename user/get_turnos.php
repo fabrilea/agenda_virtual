@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
     http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    echo json_encode([]); // array vacío en caso de no autorizado
     exit;
 }
 
@@ -32,4 +32,4 @@ foreach ($turnos as $id => $t) {
     }
 }
 
-echo json_encode(['success' => true, 'eventos' => $eventos]);
+echo json_encode($eventos);

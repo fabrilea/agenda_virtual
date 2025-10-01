@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    echo json_encode([]); // devolvemos array vacío si no es admin
     exit;
 }
 
@@ -31,9 +31,9 @@ foreach ($turnos as $id => $t) {
     $eventos[] = [
         'id' => $id,
         'title' => $title,
-        'start' => $t['fecha']."T".$t['hora'],
+        'start' => $t['fecha'] . "T" . $t['hora'],
         'color' => $color
     ];
 }
 
-echo json_encode(['success' => true, 'eventos' => $eventos]);
+echo json_encode($eventos); // ✅ Array plano para FullCalendar

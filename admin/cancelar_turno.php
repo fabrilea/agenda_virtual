@@ -22,9 +22,15 @@ if (!$idTurno) {
 $turno = $database->getReference('turnos/'.$idTurno)->getValue();
 
 if ($turno) {
-    $database->getReference('turnos/'.$idTurno)->update([
-        'estado' => 'CANCELADO'
-    ]);
+    $updateData = [
+        'estado' => 'CANCELADO',
+        'usuarioId' => null, // 🔹 liberamos el usuario si estaba asignado
+        'canceladoPor' => $_SESSION['user']['id'], // opcional: registrar admin
+        'fechaCancelacion' => date('Y-m-d H:i:s')
+    ];
+
+    $database->getReference('turnos/'.$idTurno)->update($updateData);
+
     echo json_encode(['success' => true, 'message' => 'Turno cancelado por el administrador.']);
 } else {
     http_response_code(404);

@@ -12,16 +12,12 @@ $usuarios = $database->getReference('usuarios')->getValue() ?: [];
 $turnos   = $database->getReference('turnos')->getValue() ?: [];
 
 // 🔹 Calcular métricas
-$totalUsuarios   = count($usuarios);
-$reservados      = 0;
-$disponibles     = 0;
-$cancelados      = 0;
+$totalUsuarios = count($usuarios);
+$totalTurnos   = count($turnos);
 
-foreach ($turnos as $t) {
-    if ($t['estado'] === 'RESERVADO') $reservados++;
-    elseif ($t['estado'] === 'DISPONIBLE') $disponibles++;
-    elseif ($t['estado'] === 'CANCELADO') $cancelados++;
-}
+$reservados  = count(array_filter($turnos, fn($t) => $t['estado'] === 'RESERVADO'));
+$disponibles = count(array_filter($turnos, fn($t) => $t['estado'] === 'DISPONIBLE'));
+$cancelados  = count(array_filter($turnos, fn($t) => $t['estado'] === 'CANCELADO'));
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -40,6 +36,7 @@ foreach ($turnos as $t) {
   <p class="mb-4">Bienvenido, <strong><?= htmlspecialchars($_SESSION['user']['nombre']) ?></strong></p>
 
   <div class="row g-4">
+    <!-- Usuarios -->
     <div class="col-12 col-md-4">
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body text-center">
@@ -49,6 +46,8 @@ foreach ($turnos as $t) {
         </div>
       </div>
     </div>
+
+    <!-- Reservados -->
     <div class="col-12 col-md-4">
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body text-center">
@@ -58,6 +57,8 @@ foreach ($turnos as $t) {
         </div>
       </div>
     </div>
+
+    <!-- Disponibles -->
     <div class="col-12 col-md-4">
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body text-center">
@@ -67,6 +68,8 @@ foreach ($turnos as $t) {
         </div>
       </div>
     </div>
+
+    <!-- Cancelados -->
     <div class="col-12 col-md-4">
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body text-center">
@@ -76,12 +79,14 @@ foreach ($turnos as $t) {
         </div>
       </div>
     </div>
+
+    <!-- Resumen -->
     <div class="col-12 col-md-8">
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
           <h5 class="card-title mb-3">📊 Resumen General</h5>
           <ul>
-            <li>Total de turnos creados: <?= count($turnos) ?></li>
+            <li>Total de turnos creados: <?= $totalTurnos ?></li>
             <li>Reservados: <?= $reservados ?></li>
             <li>Disponibles: <?= $disponibles ?></li>
             <li>Cancelados: <?= $cancelados ?></li>
