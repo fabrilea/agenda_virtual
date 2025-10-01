@@ -1,28 +1,41 @@
-/* 🔹 Texto más grande */
-body, table, .card, .btn, input, select {
-    font-size: 1.2rem !important;  /* aumenta tamaño general */
+/* Texto general más grande */
+body {
+    font-size: 1.2rem;
+    background: #f0f2f5;
   }
   
-  /* 🔹 Títulos */
+  /* Títulos */
   h1, h2, h3, .card-title {
     font-size: 1.6rem !important;
     font-weight: bold;
   }
   
-  /* 🔹 Botones más fáciles de pulsar */
+  /* Tarjetas */
+  .card {
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
+  
+  /* Inputs */
+  .form-control {
+    font-size: 1.2rem !important;
+    padding: 14px !important;
+  }
+  
+  /* Botones */
   .btn {
     font-size: 1.2rem !important;
-    padding: 12px 20px !important; /* más área táctil */
+    padding: 14px !important;
     border-radius: 10px !important;
   }
   
-  /* 🔹 Tablas más legibles */
+  /* Tablas */
   .table td, .table th {
-    padding: 14px !important;
     font-size: 1.2rem !important;
+    padding: 14px !important;
   }
   
-  /* 🔹 Calendario más accesible */
+  /* Calendario */
   .fc .fc-daygrid-day-number {
     font-size: 1.2rem !important;
   }
@@ -33,3 +46,4 @@ body, table, .card, .btn, input, select {
     font-size: 1.1rem !important;
     padding: 10px 16px !important;
   }
+  

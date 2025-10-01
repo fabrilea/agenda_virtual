@@ -1,63 +1,38 @@
-<?php
-session_start();
-require 'config.php';
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $usuarios = $database->getReference('usuarios')->getValue() ?: [];
-    foreach ($usuarios as $uid => $user) {
-        if (!isset($user['email'], $user['password'], $user['rol'])) continue;
-
-        if ($user['email'] === $email && password_verify($password, $user['password'])) {
-            $_SESSION['user'] = [
-                'id' => $uid,
-                'rol' => $user['rol'],
-                'nombre' => $user['nombre'] ?? 'Usuario'
-            ];
-            header("Location: " . ($user['rol'] === 'ADMIN' ? "admin/panel.php" : "user/agenda.php"));
-            exit;
-        }
-    }
-    $error = "Credenciales inválidas";
-}
-?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login - Agenda Virtual</title>
+  <title>Iniciar Sesión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link href="css/style.css" rel="stylesheet">
+  <style>
+    .login-card {
+      max-width: 480px;
+      width: 100%;
+      margin: auto;
+      padding: 2rem;
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body class="d-flex align-items-center justify-content-center min-vh-100">
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
-    <h2 class="text-center mb-3">Iniciar sesión</h2>
-
-    <?php if (!empty($error)): ?>
-      <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
-
-    <form method="POST">
-      <div class="mb-3">
-        <label for="email" class="form-label">Correo electrónico</label>
-        <input id="email" type="email" name="email" class="form-control" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="password" class="form-label">Contraseña</label>
-        <input id="password" type="password" name="password" class="form-control" required>
-      </div>
-
-      <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-
-      <div class="mt-3 text-center">
-        <a href="register.php" class="btn btn-outline-secondary w-100">Registrarse</a>
-      </div>
-    </form>
+<div class="card shadow login-card">
+  <h2 class="text-center mb-4">Iniciar Sesión</h2>
+  <form method="POST" action="login.php">
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <input type="password" name="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+  </form>
+  <div class="mt-3">
+    <a href="register.php" class="btn btn-outline-secondary w-100">Registrarse</a>
   </div>
 </div>
 
