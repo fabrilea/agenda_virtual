@@ -1,0 +1,35 @@
+/* 🔹 Texto más grande */
+body, table, .card, .btn, input, select {
+    font-size: 1.2rem !important;  /* aumenta tamaño general */
+  }
+  
+  /* 🔹 Títulos */
+  h1, h2, h3, .card-title {
+    font-size: 1.6rem !important;
+    font-weight: bold;
+  }
+  
+  /* 🔹 Botones más fáciles de pulsar */
+  .btn {
+    font-size: 1.2rem !important;
+    padding: 12px 20px !important; /* más área táctil */
+    border-radius: 10px !important;
+  }
+  
+  /* 🔹 Tablas más legibles */
+  .table td, .table th {
+    padding: 14px !important;
+    font-size: 1.2rem !important;
+  }
+  
+  /* 🔹 Calendario más accesible */
+  .fc .fc-daygrid-day-number {
+    font-size: 1.2rem !important;
+  }
+  .fc .fc-toolbar-title {
+    font-size: 1.5rem !important;
+  }
+  .fc-button {
+    font-size: 1.1rem !important;
+    padding: 10px 16px !important;
+  }
