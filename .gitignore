@@ -1,0 +1,16 @@
+# Composer
+/vendor/
+composer.lock
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Configuración sensible
+firebase-admin.json
+.env
+
+# IDE/editor
+.idea/
+.vscode/
+*.swp
