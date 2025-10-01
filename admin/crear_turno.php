@@ -2,9 +2,11 @@
 session_start();
 require '../config.php';
 
+header('Content-Type: application/json'); // 👈 siempre devolvemos JSON
+
 if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     http_response_code(403);
-    echo "Acceso denegado";
+    echo json_encode(['success' => false, 'message' => 'Acceso denegado']);
     exit;
 }
 
@@ -21,7 +23,7 @@ if ($fecha && $hora) {
         'adminId' => $adminId,
         'usuarioId' => null
     ]);
-    header('Content-Type: application/json');
+
     echo json_encode(['success' => true, 'message' => 'Turno creado']);
 } else {
     http_response_code(400);
