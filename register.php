@@ -1,4 +1,32 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require 'config.php'; // 👈 conexión Firebase
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $nombre   = $_POST['nombre'] ?? '';
+    $email    = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    if ($nombre && $email && $password) {
+        // Encriptar contraseña
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+
+        // Guardar en Firebase
+        $database->getReference('usuarios')->push([
+            'nombre'   => $nombre,
+            'email'    => $email,
+            'password' => $hash,
+            'rol'      => 'USER' // 👈 por defecto siempre USER
+        ]);
+
+        // Redirigir al login
+        header("Location: login.php?registro=ok");
+        exit;
+    } else {
+        $error = "Todos los campos son obligatorios";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -27,9 +55,14 @@
 
 <div class="card shadow register-card">
   <h2 class="text-center mb-4">📝 Registro</h2>
-  <form method="POST" action="register.php">
+
+  <?php if (!empty($error)): ?>
+    <div class="alert alert-danger text-center"><?= $error ?></div>
+  <?php endif; ?>
+
+  <form method="POST" action="">
     <div class="mb-3">
-      <label for="nombre" class="form-label">Nombre</label>
+      <label for="nombre" class="form-label">Nombre completo</label>
       <input type="text" id="nombre" name="nombre" 
              class="form-control form-control-lg" required 
              autocomplete="name">
@@ -48,8 +81,9 @@
     </div>
     <button type="submit" class="btn btn-success btn-lg w-100">Crear cuenta</button>
   </form>
+
   <div class="mt-3">
-    <a href="login.php" class="btn btn-outline-secondary btn-lg w-100">Volver a iniciar sesión</a>
+    <a href="login.php" class="btn btn-outline-secondary btn-lg w-100">Volver al inicio de sesión</a>
   </div>
 </div>
 

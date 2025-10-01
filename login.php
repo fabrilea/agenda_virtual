@@ -1,4 +1,34 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require 'config.php'; // 👈 conexión Firebase
+
+// Procesar login
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    $usuarios = $database->getReference('usuarios')->getValue() ?: [];
+    $error = "Credenciales inválidas";
+
+    foreach ($usuarios as $uid => $user) {
+        if ($user['email'] === $email && password_verify($password, $user['password'])) {
+            $_SESSION['user'] = [
+                'id' => $uid,
+                'rol' => $user['rol'],
+                'nombre' => $user['nombre']
+            ];
+
+            // Redirigir según rol
+            if ($user['rol'] === "ADMIN") {
+                header("Location: admin/panel.php");
+            } else {
+                header("Location: user/agenda.php");
+            }
+            exit;
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -27,7 +57,13 @@
 
 <div class="card shadow login-card">
   <h2 class="text-center mb-4">🔑 Iniciar Sesión</h2>
-  <form method="POST" action="login.php">
+  
+  <?php if (!empty($error)): ?>
+    <div class="alert alert-danger text-center"><?= $error ?></div>
+  <?php endif; ?>
+
+  <!-- 🔹 OJO: ahora action="" para postear a sí misma -->
+  <form method="POST" action="">
     <div class="mb-3">
       <label for="email" class="form-label">Correo electrónico</label>
       <input type="email" id="email" name="email" 
