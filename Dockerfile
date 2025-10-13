@@ -6,9 +6,6 @@ RUN apt-get update && apt-get install -y \
     git zip unzip libssl-dev libzip-dev pkg-config libsodium-dev \
     && docker-php-ext-install zip sodium
 
-# Crea el directorio de secretos y asegura permisos
-RUN mkdir -p /etc/secrets && chmod -R 755 /etc/secrets
-
 # Copia el código de la aplicación al contenedor
 COPY . /var/www/html/
 
@@ -25,5 +22,5 @@ WORKDIR /var/www/html/public
 # Expone el puerto usado por Render
 EXPOSE 10000
 
-# Comando que inicia el servidor PHP integrado
-CMD ["php", "-S", "0.0.0.0:10000", "-t", "/var/www/html/public"]
+# 🔧 Copia el secreto a una ruta accesible y cambia permisos antes de iniciar PHP
+CMD sh -c "cp /etc/secrets/firebase_credentials.json /tmp/firebase_credentials.json && chmod 644 /tmp/firebase_credentials.json && php -S 0.0.0.0:10000 -t /var/www/html/public"
