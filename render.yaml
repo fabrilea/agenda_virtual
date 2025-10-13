@@ -4,27 +4,11 @@ services:
     env: docker
     plan: free
     region: oregon
-    buildCommand: "composer install"
-    startCommand: "php -S 0.0.0.0:10000 -t public"
+    buildCommand: ""
+    startCommand: ""
     rootDir: .
     envVars:
       - key: FIREBASE_URL
         value: https://agenda-31b98-default-rtdb.firebaseio.com
       - key: FIREBASE_KEY_PATH
         value: /etc/secrets/firebase_credentials.json
-    secretFiles:
-      - path: /etc/secrets/firebase_credentials.json
-        contents: |
-          {
-            "type": "service_account",
-            "project_id": "agenda-31b98",
-            "private_key_id": "9eac86c7e537122fb97bedea0dd0b94b775c3c67",
-            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDVYInCGlBkIFmd\nRNYt7tAK/Rp82qpVK+ZPG1Jtm+znSmp6B8JSMzqGutbw7ieQyxaE5V3jbErgUAtB\naGXUQQQSS58oHn/229gqiKY7r/fzXNAi6n7JDfkI0ajfuMJ3bgSKjKJbJPe907kl\nq+JbqDmjSdjRFiyepkUpQH4OhI/JNCF/Fqi/CmqdS/Ds1mFSTTObtsoSj0palgrU\nuWzV9tQzIRlSVT+vSgrzYEerG71xxkXE7QTupTrHyZYoIR1RjVVLdEXQz1XZzeo5\nmGb9he++hWsszUi2mw0OrlhU9JQX2TYn9YxTnlx0zN+ftCi/eA6YJaHK6YA2SYMq\nB/tbuXX1AgMBAAECggEABk0tOad6Zk4k8EItZDNuhhuqU5cq7NNxoBoAy4Op44QU\nF88pvaKbq4lgXaZB/RfrNRxrMxMxinNytTPoaYJosu2ey/2EYGEt8FSFAZdcdKwA\nP1tI1paIt7FmvJA6nRz7NnZ9ABaGn17dqQTQl/iWMyyl6R0TTyc+khTAgLkI0gjY\ny27lL3u37tZsaEH3oaTS2uheDYd8S9haCAWEJmAZrFP7YPDXK9TuokgazK1Zco13\njFdEbF8D+5RLU32i3h5ebWZuGN6JFfAVUreTEvolMzk4CG0Mgs5B7AOj4urJp1zB\n37EiAFu7/uhYzUc8BcQKSH1CK89qDqczuRIEsjs65QKBgQD+D3AnUgbaYaKiMuVu\nngOPzEDtKULieE47jKUcQ7d82vZFvluSO6bkkl1M3H01/KjIVlB02YD2yvzYOM1H\njzvpuG+BN1BypnHyGCG8YrEEV9AqWAIF2AP51iuCyivJypcmziSGDtH7d97E7a/3\nUOKj1HbfZ4jFhiOBHfZSRy1GMwKBgQDXAZWj5ef3iQzyjCBfux7DQKdOuIIOh2n3\nWpkesNAJljuH/SyHFAHwrb9sZYTWcy/CWunEDbD0D+1wjmxQ8u64GcLch7efUC+y\nr7IvlIM2YOf+/k0R4+labxQjSXE51EAtTUeIyHS9hWMCka3XF4rI8ZE4UbzsgCjA\nJ9mygwgbNwKBgQCwf1ch6ela40NRvVwImfvNdU+Rsv2FSaDH2/CEj0K0mYVHdHQ3\nRfuuhUQN9ouB6vHyo4wncUcXrHM1X1i1IvuzZe8I7L2VuK4mSr99GW7ynnK+R/+3\nwZcZhMEbjooXGQgi7EkRXNBiC6eWVa3OecHJoPuoPkwVNRgLRh5ukIYSYwKBgGr1\ny9a0ehjH4lwLX9OgCCbEVDcyTOkjbpDyTjhZZ7VNOqJlTbCJQInWNeOcAWCZ/wlm\nJuM0mHJiNhIHmFUQ9bc6gZkqHywvPPtcsn0/GaOExAUzx219/0nQ9qizUZOeRqsC\nxfKDHqhl4iKWDHBzssRSgJcO+riA7UTizkcjLnYzAoGAKVZs7hGXVTTOZTwsBqRK\nfk7gtSGYEFYXq71xDkcVEWMxuitgU47YfP2xDreztevxzdGggMo5fwEZjTGVQgK0\nxVzOtfzwHUMHmKaQJW8548M6MCuXCuT5Kzhx/wGqA2njnSC0jKQDyhwIFFDlGut+\nlavjhD9axYYPku9q7x/AhTU=\n-----END PRIVATE KEY-----\n",
-            "client_email": "firebase-adminsdk-fbsvc@agenda-31b98.iam.gserviceaccount.com",
-            "client_id": "116515983559954637229",
-            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-            "token_uri": "https://oauth2.googleapis.com/token",
-            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40agenda-31b98.iam.gserviceaccount.com",
-            "universe_domain": "googleapis.com"
-          }
