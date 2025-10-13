@@ -4,7 +4,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     header("Location: ../login.php");
     exit;
 }
-require '../config.php';
+require '../../config.php';
 
 // Operaciones CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'config.php'; // 👈 conexión Firebase
+require '../config.php'; // 👈 conexión Firebase
 
 // Procesar login
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

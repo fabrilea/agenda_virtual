@@ -5,7 +5,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     exit;
 }
 
-require '../config.php';
+require '../../config.php';
 
 $usuarios = $database->getReference('usuarios')->getValue() ?: [];
 $turnos   = $database->getReference('turnos')->getValue() ?: [];
