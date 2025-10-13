@@ -1,7 +1,7 @@
 services:
   - type: web
     name: agenda-virtual
-    env: php
+    env: docker
     plan: free
     region: oregon
     buildCommand: "composer install"
