@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install -y \
     git zip unzip libssl-dev libzip-dev pkg-config libsodium-dev \
     && docker-php-ext-install zip sodium
 
+# Crea el directorio de secretos y asegura permisos
+RUN mkdir -p /etc/secrets && chmod -R 755 /etc/secrets
+
 # Copia el código de la aplicación al contenedor
 COPY . /var/www/html/
 
