@@ -2,17 +2,12 @@
 require __DIR__ . '/vendor/autoload.php';
 use Kreait\Firebase\Factory;
 
-// URL del RTDB (no uses la de la consola)
-$dbUri = 'https://agenda-31b98-default-rtdb.firebaseio.com';
+$firebaseUrl = getenv('FIREBASE_URL');
+$firebaseKeyPath = getenv('FIREBASE_KEY_PATH');
 
-// Guardar credenciales en archivo temporal (Railway → variable FIREBASE_CREDENTIALS)
-$credenciales = getenv('FIREBASE_CREDENTIALS');
-$tmpPath = sys_get_temp_dir().'/firebase.json';
-file_put_contents($tmpPath, $credenciales);
+$factory = (new Factory)
+    ->withDatabaseUri($firebaseUrl)
+    ->withServiceAccount($firebaseKeyPath);
 
-// Inicializar Firebase
-$firebase = (new Factory)
-    ->withServiceAccount($tmpPath)
-    ->withDatabaseUri($dbUri);
-
-$database = $firebase->createDatabase();
+$database = $factory->createDatabase();
+?>
