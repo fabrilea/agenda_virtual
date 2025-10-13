@@ -2,24 +2,23 @@
 require __DIR__ . '/vendor/autoload.php';
 use Kreait\Firebase\Factory;
 
-// 🔥 Leer las credenciales directamente desde la variable de entorno
 $firebaseCredentials = getenv('FIREBASE_CREDENTIALS');
 $firebaseUrl = getenv('FIREBASE_URL');
 
-// 🧩 Validaciones básicas
+// 🧩 Validar que ambas existan
 if (empty($firebaseCredentials)) {
-    die('❌ ERROR: La variable FIREBASE_CREDENTIALS no está configurada.');
+    die('❌ ERROR: Falta la variable FIREBASE_CREDENTIALS');
 }
 if (empty($firebaseUrl)) {
-    die('❌ ERROR: La variable FIREBASE_URL no está configurada.');
+    die('❌ ERROR: Falta la variable FIREBASE_URL');
 }
 
-// ✅ Crear un archivo temporal con las credenciales
+// ✅ Guardar el JSON en un archivo temporal
 $tmpPath = '/tmp/firebase_credentials.json';
 file_put_contents($tmpPath, $firebaseCredentials);
 chmod($tmpPath, 0644);
 
-// 🔧 Inicializar Firebase con el archivo temporal
+// 🔧 Inicializar Firebase
 $factory = (new Factory)
     ->withServiceAccount($tmpPath)
     ->withDatabaseUri($firebaseUrl);
