@@ -2,13 +2,16 @@
 require __DIR__ . '/vendor/autoload.php';
 use Kreait\Firebase\Factory;
 
-$firebaseUrl = getenv('FIREBASE_URL');
-
-// Usa el archivo copiado a /tmp (con permisos 644)
-$firebaseKeyPath = getenv('FIREBASE_KEY_PATH') ?: '/tmp/firebase_credentials.json';
-if (!is_readable($firebaseKeyPath)) {
-    error_log("⚠️ No se puede leer el archivo de credenciales en $firebaseKeyPath");
+// ✅ Copiamos el secreto de /etc/secrets a /tmp antes de usarlo
+$source = '/etc/secrets/firebase_credentials.json';
+$tmp = '/tmp/firebase_credentials.json';
+if (file_exists($source)) {
+    @copy($source, $tmp);
+    @chmod($tmp, 0644);
 }
+
+$firebaseUrl = getenv('FIREBASE_URL');
+$firebaseKeyPath = $tmp;
 
 $factory = (new Factory)
     ->withDatabaseUri($firebaseUrl)
