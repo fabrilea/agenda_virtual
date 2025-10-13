@@ -2,33 +2,27 @@
 require __DIR__ . '/vendor/autoload.php';
 use Kreait\Firebase\Factory;
 
-// ✅ Copiar el secreto de Render a un archivo temporal legible
-$source = '/etc/secrets/firebase_credentials.json';
-$tmp = '/tmp/firebase_credentials.json';
-
-if (file_exists($source)) {
-    if (!@copy($source, $tmp)) {
-        error_log("❌ No se pudo copiar $source a $tmp");
-    } else {
-        @chmod($tmp, 0644);
-        error_log("✅ Copiado correctamente a $tmp");
-    }
-} else {
-    error_log("⚠️ El archivo $source no existe");
-}
-
+// 🔥 Leer las credenciales directamente desde la variable de entorno
+$firebaseCredentials = getenv('FIREBASE_CREDENTIALS');
 $firebaseUrl = getenv('FIREBASE_URL');
 
-// ✅ Usamos la copia temporal como service account
-$firebaseKeyPath = $tmp;
-
-if (!is_readable($firebaseKeyPath)) {
-    error_log("❌ El archivo $firebaseKeyPath no es legible");
+// 🧩 Validaciones básicas
+if (empty($firebaseCredentials)) {
+    die('❌ ERROR: La variable FIREBASE_CREDENTIALS no está configurada.');
+}
+if (empty($firebaseUrl)) {
+    die('❌ ERROR: La variable FIREBASE_URL no está configurada.');
 }
 
+// ✅ Crear un archivo temporal con las credenciales
+$tmpPath = '/tmp/firebase_credentials.json';
+file_put_contents($tmpPath, $firebaseCredentials);
+chmod($tmpPath, 0644);
+
+// 🔧 Inicializar Firebase con el archivo temporal
 $factory = (new Factory)
-    ->withDatabaseUri($firebaseUrl)
-    ->withServiceAccount($firebaseKeyPath);
+    ->withServiceAccount($tmpPath)
+    ->withDatabaseUri($firebaseUrl);
 
 $database = $factory->createDatabase();
 ?>
