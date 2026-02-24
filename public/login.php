@@ -1,30 +1,62 @@
 <?php
 session_start();
+
+require 'security_headers.php'; // 🛡️ Cabeceras de seguridad HTTP
 require '../config.php'; // 👈 conexión Firebase
+
+// 🔐 Generar token CSRF si no existe en la sesión
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+$error = '';
 
 // Procesar login
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = $_POST['email'] ?? '';
+    // Validar CSRF
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+        http_response_code(403);
+        die('Solicitud inválida.');
+    }
+
+    $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    $usuarios = $database->getReference('usuarios')->getValue() ?: [];
-    $error = "Credenciales inválidas";
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || empty($password)) {
+        $error = "Datos inválidos";
+    } else {
+        try {
+            $usuarios = $database->getReference('usuarios')->getValue() ?: [];
+            $error = "Credenciales inválidas";
 
-    foreach ($usuarios as $uid => $user) {
-        if ($user['email'] === $email && password_verify($password, $user['password'])) {
-            $_SESSION['user'] = [
-                'id' => $uid,
-                'rol' => $user['rol'],
-                'nombre' => $user['nombre']
-            ];
+            foreach ($usuarios as $uid => $user) {
+                if (isset($user['email'], $user['password'])
+                    && $user['email'] === $email
+                    && password_verify($password, $user['password'])) {
 
-            // Redirigir según rol
-            if ($user['rol'] === "ADMIN") {
-                header("Location: admin/panel.php");
-            } else {
-                header("Location: user/agenda.php");
+                    // 🔄 Regenerar ID de sesión para prevenir session fixation
+                    session_regenerate_id(true);
+                    $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // nuevo token post-login
+
+                    $_SESSION['user'] = [
+                        'id'       => $uid,
+                        'rol'      => $user['rol'],
+                        'nombre'   => $user['nombre'],
+                        'email'    => $user['email']    ?? '',
+                        'telefono' => $user['telefono'] ?? '',
+                    ];
+
+                    // Redirigir según rol
+                    if ($user['rol'] === "ADMIN") {
+                        header("Location: admin/panel.php");
+                    } else {
+                        header("Location: user/agenda.php");
+                    }
+                    exit;
+                }
             }
-            exit;
+        } catch (\Throwable $e) {
+            $error = "Error al iniciar sesión. Inténtelo de nuevo.";
         }
     }
 }
@@ -59,11 +91,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <h2 class="text-center mb-4">🔑 Iniciar Sesión</h2>
   
   <?php if (!empty($error)): ?>
-    <div class="alert alert-danger text-center"><?= $error ?></div>
+    <div class="alert alert-danger text-center"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
   <?php endif; ?>
 
-  <!-- 🔹 OJO: ahora action="" para postear a sí misma -->
   <form method="POST" action="">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
     <div class="mb-3">
       <label for="email" class="form-label">Correo electrónico</label>
       <input type="email" id="email" name="email" 

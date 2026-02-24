@@ -4,16 +4,21 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     header("Location: ../login.php");
     exit;
 }
-
+require '../security_headers.php';
 require '../../config.php';
 
-$usuarios = $database->getReference('usuarios')->getValue() ?: [];
-$turnos   = $database->getReference('turnos')->getValue() ?: [];
+try {
+    $usuarios = $database->getReference('usuarios')->getValue() ?: [];
+    $turnos   = $database->getReference('turnos')->getValue() ?: [];
+} catch (\Throwable $e) {
+    $usuarios = [];
+    $turnos   = [];
+}
 
 $totalUsuarios = count($usuarios);
 $totalTurnos   = count($turnos);
-$reservados    = count(array_filter($turnos, fn($t) => $t['estado'] === 'RESERVADO'));
-$disponibles   = count(array_filter($turnos, fn($t) => $t['estado'] === 'DISPONIBLE'));
+$reservados    = count(array_filter($turnos, fn($t) => ($t['estado'] ?? '') === 'RESERVADO'));
+$disponibles   = count(array_filter($turnos, fn($t) => ($t['estado'] ?? '') === 'DISPONIBLE'));
 ?>
 <!DOCTYPE html>
 <html lang="es">

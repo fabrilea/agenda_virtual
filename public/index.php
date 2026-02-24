@@ -1,5 +1,6 @@
 <?php
 session_start();
+require 'security_headers.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -18,7 +19,7 @@ session_start();
       <a href="login.php" class="btn btn-primary w-100 mb-2">Iniciar Sesión</a>
       <a href="register.php" class="btn btn-outline-secondary w-100">Registrarse</a>
   <?php else: ?>
-      <p>Hola, <?= htmlspecialchars($_SESSION['user']['nombre']) ?> (<?= $_SESSION['user']['rol'] ?>)</p>
+      <p>Hola, <?= htmlspecialchars($_SESSION['user']['nombre'], ENT_QUOTES, 'UTF-8') ?> (<?= htmlspecialchars($_SESSION['user']['rol'], ENT_QUOTES, 'UTF-8') ?>)</p>
       <?php if ($_SESSION['user']['rol'] === 'USER'): ?>
           <a href="user/agenda.php" class="btn btn-success w-100 mb-2">Ir a mi agenda</a>
       <?php else: ?>

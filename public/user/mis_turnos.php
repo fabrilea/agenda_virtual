@@ -11,15 +11,26 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
 }
 
 $idUsuario = $_SESSION['user']['id'];
-$turnos = $database->getReference('turnos')->getValue() ?: [];
+
+try {
+    $turnos = $database->getReference('turnos')->getValue() ?: [];
+} catch (\Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error al obtener los turnos.']);
+    exit;
+}
 
 $misTurnos = [];
 foreach ($turnos as $id => $t) {
-    if ($t['estado'] === 'RESERVADO' && $t['usuarioId'] === $idUsuario) {
+    $estado = $t['estado'] ?? '';
+    $esDelUsuario = ($t['usuarioId'] ?? '') === $idUsuario;
+
+    if ($esDelUsuario && in_array($estado, ['PENDIENTE', 'CONFIRMADO', 'RESERVADO'], true)) {
         $misTurnos[] = [
-            'id' => $id,
-            'fecha' => $t['fecha'],
-            'hora' => $t['hora']
+            'id'     => $id,
+            'fecha'  => $t['fecha'],
+            'hora'   => $t['hora'],
+            'estado' => $estado,
         ];
     }
 }

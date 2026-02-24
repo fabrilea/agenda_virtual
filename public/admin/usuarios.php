@@ -4,27 +4,94 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     header("Location: ../login.php");
     exit;
 }
+require '../security_headers.php';
 require '../../config.php';
+
+// 🔐 Generar token CSRF si no existe
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+$ROL_VALIDOS = ['USER', 'ADMIN'];
+$error_form  = '';
 
 // Operaciones CRUD
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validar CSRF
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+        http_response_code(403);
+        die('Solicitud inválida.');
+    }
+
     $accion = $_POST['accion'] ?? '';
+
     if ($accion === 'agregar') {
-        $database->getReference('usuarios')->push([
-            'nombre'   => $_POST['nombre'],
-            'email'    => $_POST['email'],
-            'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
-            'rol'      => $_POST['rol']
-        ]);
+        $nombre   = trim($_POST['nombre']   ?? '');
+        $email    = trim($_POST['email']    ?? '');
+        $password = $_POST['password']      ?? '';
+        $rol      = $_POST['rol']           ?? '';
+
+        if (!$nombre || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8) {
+            $error_form = "Datos inválidos: nombre requerido, email válido y contraseña mínimo 8 caracteres.";
+        } elseif (!in_array($rol, $ROL_VALIDOS, true)) {
+            $error_form = "Rol inválido.";
+        } else {
+            try {
+                // Verificar email duplicado
+                $existentes = $database->getReference('usuarios')->getValue() ?: [];
+                $duplicado  = false;
+                foreach ($existentes as $u) {
+                    if (isset($u['email']) && strtolower($u['email']) === strtolower($email)) {
+                        $duplicado = true;
+                        break;
+                    }
+                }
+                if ($duplicado) {
+                    $error_form = "Ya existe un usuario con ese correo electrónico.";
+                } else {
+                    $database->getReference('usuarios')->push([
+                        'nombre'   => $nombre,
+                        'email'    => $email,
+                        'password' => password_hash($password, PASSWORD_DEFAULT),
+                        'rol'      => $rol
+                    ]);
+                    header("Location: usuarios.php");
+                    exit;
+                }
+            } catch (\Throwable $e) {
+                $error_form = "Error al agregar el usuario.";
+            }
+        }
     }
+
     if ($accion === 'eliminar') {
-        $database->getReference('usuarios/'.$_POST['id'])->remove();
+        $id = $_POST['id'] ?? '';
+
+        // Prevenir path traversal: solo caracteres alfanuméricos y guiones
+        if (!preg_match('/^[\w-]+$/', $id)) {
+            http_response_code(400);
+            die('ID inválido.');
+        }
+        // Impedir que el admin se elimine a sí mismo
+        if ($id === $_SESSION['user']['id']) {
+            $error_form = "No puedes eliminar tu propia cuenta.";
+        } else {
+            try {
+                $database->getReference('usuarios/'.$id)->remove();
+                header("Location: usuarios.php");
+                exit;
+            } catch (\Throwable $e) {
+                $error_form = "Error al eliminar el usuario.";
+            }
+        }
     }
-    header("Location: usuarios.php");
-    exit;
 }
 
-$usuarios = $database->getReference('usuarios')->getValue() ?: [];
+try {
+    $usuarios = $database->getReference('usuarios')->getValue() ?: [];
+} catch (\Throwable $e) {
+    $usuarios = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -47,10 +114,15 @@ $usuarios = $database->getReference('usuarios')->getValue() ?: [];
 <div class="container-fluid py-3">
   <h2 class="mb-4 text-center">👥 Gestión de Usuarios</h2>
 
+  <?php if (!empty($error_form)): ?>
+    <div class="alert alert-danger"><?= htmlspecialchars($error_form, ENT_QUOTES, 'UTF-8') ?></div>
+  <?php endif; ?>
+
   <!-- Formulario Agregar -->
   <div class="card mb-4 shadow p-3">
     <h5>➕ Agregar Usuario</h5>
     <form method="POST" class="row g-3">
+      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
       <input type="hidden" name="accion" value="agregar">
 
       <div class="col-12 col-md-3">
@@ -101,8 +173,9 @@ $usuarios = $database->getReference('usuarios')->getValue() ?: [];
               </td>
               <td>
                 <form method="POST" style="display:inline;">
+                  <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
                   <input type="hidden" name="accion" value="eliminar">
-                  <input type="hidden" name="id" value="<?= $uid ?>">
+                  <input type="hidden" name="id" value="<?= htmlspecialchars($uid, ENT_QUOTES, 'UTF-8') ?>">
                   <button type="submit" class="btn btn-sm btn-danger"
                           onclick="return confirm('¿Seguro que deseas eliminar este usuario?');">
                     🗑 Eliminar

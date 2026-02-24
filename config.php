@@ -13,10 +13,10 @@ if (empty($firebaseUrl)) {
     die('❌ ERROR: Falta la variable FIREBASE_URL');
 }
 
-// ✅ Guardar el JSON en un archivo temporal
-$tmpPath = '/tmp/firebase_credentials.json';
+// ✅ Guardar el JSON en un archivo temporal (solo lectura por el propietario)
+$tmpPath = '/tmp/firebase_credentials_' . getmypid() . '.json';
 file_put_contents($tmpPath, $firebaseCredentials);
-chmod($tmpPath, 0644);
+chmod($tmpPath, 0600);
 
 // 🔧 Inicializar Firebase
 $factory = (new Factory)
@@ -24,4 +24,7 @@ $factory = (new Factory)
     ->withDatabaseUri($firebaseUrl);
 
 $database = $factory->createDatabase();
+
+// 🔒 Eliminar credenciales del disco inmediatamente
+unlink($tmpPath);
 ?>

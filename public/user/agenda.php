@@ -4,6 +4,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
     header("Location: ../login.php");
     exit;
 }
+require '../security_headers.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -49,6 +50,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "USER") {
           <tr>
             <th>Fecha</th>
             <th>Hora</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -69,15 +71,23 @@ function cargarMisTurnos() {
       tbody.innerHTML = "";
 
       if (!data.success || data.turnos.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='3'>No tienes turnos reservados</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='4'>No tienes turnos reservados</td></tr>";
         return;
       }
 
       data.turnos.forEach(t => {
+        const badgeMap = {
+          'PENDIENTE':  '<span class="badge bg-warning text-dark">\u23f3 Pendiente</span>',
+          'CONFIRMADO': '<span class="badge bg-success">\u2705 Confirmado</span>',
+          'RESERVADO':  '<span class="badge bg-primary">Reservado</span>',
+        };
+        const badge = badgeMap[t.estado] || `<span class="badge bg-secondary">${t.estado}</span>`;
+
         let tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${t.fecha}</td>
           <td>${t.hora}</td>
+          <td>${badge}</td>
           <td>
             <button class="btn btn-sm btn-danger" onclick="cancelarTurno('${t.id}')">Cancelar</button>
           </td>

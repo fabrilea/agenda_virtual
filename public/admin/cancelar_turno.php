@@ -1,6 +1,7 @@
 <?php
 session_start();
 require '../../config.php';
+require '../notificaciones.php';
 
 header('Content-Type: application/json');
 
@@ -10,29 +11,52 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['rol'] !== "ADMIN") {
     exit;
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
+$data    = json_decode(file_get_contents("php://input"), true);
 $idTurno = $data['id'] ?? null;
 
-if (!$idTurno) {
+// 🛡️ Prevenir path traversal: solo caracteres alfanuméricos y guiones
+if (!$idTurno || !preg_match('/^[\w-]+$/', $idTurno)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Turno inválido']);
+    echo json_encode(['success' => false, 'message' => 'ID de turno inválido']);
     exit;
 }
 
-$turno = $database->getReference('turnos/'.$idTurno)->getValue();
+try {
+    $turno = $database->getReference('turnos/'.$idTurno)->getValue();
 
-if ($turno) {
-    $updateData = [
-        'estado' => 'CANCELADO',
-        'usuarioId' => null, // 🔹 liberamos el usuario si estaba asignado
-        'canceladoPor' => $_SESSION['user']['id'], // opcional: registrar admin
-        'fechaCancelacion' => date('Y-m-d H:i:s')
-    ];
+    if ($turno) {
+        $idUsuarioCancelado = $turno['usuarioId'] ?? null;
 
-    $database->getReference('turnos/'.$idTurno)->update($updateData);
+        $updateData = [
+            'estado'           => 'CANCELADO',
+            'usuarioId'        => null,
+            'canceladoPor'     => $_SESSION['user']['id'],
+            'fechaCancelacion' => date('Y-m-d H:i:s')
+        ];
 
-    echo json_encode(['success' => true, 'message' => 'Turno cancelado por el administrador.']);
-} else {
-    http_response_code(404);
-    echo json_encode(['success' => false, 'message' => 'Turno no encontrado.']);
+        $database->getReference('turnos/'.$idTurno)->update($updateData);
+
+        // 🔔 Notificar al usuario si tenía este turno asignado
+        if ($idUsuarioCancelado) {
+            $usuario = $database->getReference('usuarios/' . $idUsuarioCancelado)->getValue();
+            if ($usuario) {
+                notificarCambioTurno(
+                    $usuario['email']    ?? '',
+                    $usuario['nombre']   ?? 'Usuario',
+                    'CANCELADO',
+                    $turno['fecha'],
+                    $turno['hora'],
+                    $usuario['telefono'] ?? ''
+                );
+            }
+        }
+
+        echo json_encode(['success' => true, 'message' => 'Turno cancelado por el administrador.']);
+    } else {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'message' => 'Turno no encontrado.']);
+    }
+} catch (\Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error al procesar la solicitud.']);
 }

@@ -6,11 +6,14 @@
     </button>
     <div class="collapse navbar-collapse" id="sidebarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <?php if ($_SESSION['user']['rol'] === 'USER'): ?>
+        <?php
+          $rolActual = isset($_SESSION['user']['rol']) ? $_SESSION['user']['rol'] : '';
+          if ($rolActual === 'USER'):
+        ?>
           <li class="nav-item">
             <a class="nav-link" href="../user/agenda.php">📅 Mi Agenda</a>
           </li>
-        <?php elseif ($_SESSION['user']['rol'] === 'ADMIN'): ?>
+        <?php elseif ($rolActual === 'ADMIN'): ?>
           <li class="nav-item">
             <a class="nav-link" href="../admin/panel.php">⚙️ Panel Admin</a>
           </li>
